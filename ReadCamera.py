@@ -1,11 +1,11 @@
 import numpy as np
 import cv2
 import threading
-from gpiozero import PWMLED
+from gpiozero import PWMOutputDevice
 from time import sleep
 cap = cv2.VideoCapture(0)
-fan = PWMLED(14)
-
+fan = PWMOutputDevice(14,active_high=False)
+fan.frequency = 10000
 
 def findOrange(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -33,24 +33,14 @@ def findOrange(frame):
             #print(f"found ball at {rect[0]} of size of width {rect[1][0]} and height {rect[1][1]}")
             
             
-def sendPwm():
-    try:
-  # fade in and out forever
-        while True:
-            #fade in
-            for duty_cycle in range(0, 100, 1):
-            fan.value = duty_cycle/100.0
-            sleep(0.05)
+def sendPwm(fan,val):
+#   if val >100:
+#       val = 100
+#   elif val <0:
+#       val = 0
+  fan.value = val# 1 is max so devide input by a hundred
+  sleep(0.05)
 
-            #fade out
-            for duty_cycle in range(100, 0, -1):
-            fan.value = duty_cycle/100.0
-            sleep(0.05)
-      
-    except KeyboardInterrupt:
-        print("Stop the program and turning off the fan")
-        fan.value = 0
-        pass
 
 while True:
     ret, frame = cap.read()
@@ -59,7 +49,7 @@ while True:
     t1 = threading.Thread(target=findOrange,args=[frame])
     t1.start()
     t1.join()
-    sendPwm()
+    sendPwm(fan,0)
     
     # Display the resulting frame
     cv2.imshow('Orange Ball Tracking', frame)
