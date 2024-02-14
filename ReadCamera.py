@@ -34,11 +34,11 @@ def findOrange(frame):
             
             
 def sendPwm(fan,val):
-#   if val >100:
-#       val = 100
-#   elif val <0:
-#       val = 0
-  fan.value = val# 1 is max so devide input by a hundred
+  if val >100:
+      val = 100
+  elif val <0:
+      val = 0
+  fan.value = val/100# 1 is max so devide input by a hundred
   sleep(0.05)
 
 
