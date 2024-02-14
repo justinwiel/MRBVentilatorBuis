@@ -39,7 +39,7 @@ def sendPwm(fan,val):
   elif val <0:
       val = 0
   fan.value = val/100# 1 is max so devide input by a hundred
-  sleep(0.05)
+#   sleep(0.05)
 
 
 while True:
@@ -49,7 +49,7 @@ while True:
     t1 = threading.Thread(target=findOrange,args=[frame])
     t1.start()
     t1.join()
-    sendPwm(fan,0)
+    sendPwm(fan,75)
     
     # Display the resulting frame
     cv2.imshow('Orange Ball Tracking', frame)
