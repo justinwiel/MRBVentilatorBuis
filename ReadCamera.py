@@ -1,12 +1,12 @@
 import numpy as np
 import cv2
+import threading
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
-while True:
-    ret, frame = cap.read()
-    
-    # Convert BGR to HSV
+
+
+def findOrange(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
     # Define range of orange color in HSV
@@ -29,7 +29,15 @@ while True:
             box = cv2.boxPoints(rect)
             box = np.intp(box)
             cv2.drawContours(frame, [box], 0, (0, 255, 0), 2)
-            print(f"found ball at {rect[0]} of size of width {rect[1][0]} and height {rect[1][1]}")
+            #print(f"found ball at {rect[0]} of size of width {rect[1][0]} and height {rect[1][1]}")
+
+while True:
+    ret, frame = cap.read()
+    
+
+    t1 = threading.Thread(target=findOrange,args=[frame])
+    t1.start()
+    t1.join()
     
     # Display the resulting frame
     cv2.imshow('Orange Ball Tracking', frame)
