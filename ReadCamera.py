@@ -29,8 +29,6 @@ class BallFinder:
 
     def findColor(self,frame,lower,upper):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        
-        # Define range of orange color in HSV
 
         # Threshold the HSV image to get only orange colors
         mask = cv2.inRange(hsv, lower, upper)
