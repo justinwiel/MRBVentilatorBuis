@@ -1,2 +1,8 @@
 *.txt
+*.pyc
+__pycache__/
+venv/
+*.env
+.idea/
+.vscode/
 *.img
