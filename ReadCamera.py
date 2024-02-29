@@ -6,6 +6,19 @@ from time import sleep
 cap = cv2.VideoCapture(0)
 
 
+class MovingAvgFilter:
+    def __init__(self,sampleSize) -> None:
+        self.values = []
+        self.sampleSize = sampleSize
+    def addSample(self,sample):
+        self.values.append(sample)
+        if len(self.values) > self.sampleSize:
+            self.values.pop(0)  # remove first element if maximum sample size is reached. 
+            
+    def getAvg(self):
+        return  np.average(self.values) if len(self.values) >0 else 0
+
+
 
 class fanControler: 
     def __init__(self,pin:int,bActive_high:bool=False) -> None:
