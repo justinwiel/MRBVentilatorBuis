@@ -65,7 +65,9 @@ class BallFinder:
 
                 cv2.drawContours(frame, [box_smoothed], 0, (0, 255, 0), 2)
                 result[0]= rect[0][1]
-                return
+                return#return like this, to provide the option to use a seperate thread
+        result[0] = 0# if no ball is found return 0 
+        return
 
                 
             
