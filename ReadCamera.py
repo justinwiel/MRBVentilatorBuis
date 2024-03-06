@@ -64,7 +64,7 @@ class BallFinder:
                 box_smoothed = cv2.convexHull(box)
 
                 cv2.drawContours(frame, [box_smoothed], 0, (0, 255, 0), 2)
-                print(f"found ball at {rect[0]} of size of width {rect[1][0]} and height {rect[1][1]}")
+        
                 
             
             
