@@ -59,7 +59,7 @@ class BallFinder:
         # Draw bounding box around the orange ball
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area > 10:
+            if area > 20:
                 rect = cv2.minAreaRect(contour)
                 box = cv2.boxPoints(rect)
                 box = np.intp(box)
@@ -106,7 +106,7 @@ def main():
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
-    filter = MovingAvgFilter(20)
+    filter = MovingAvgFilter(3)
     result = [0]
     control.setValue(100)
     sleep(0.2)
