@@ -3,6 +3,7 @@ import cv2
 import threading
 from gpiozero import PWMOutputDevice
 from time import sleep
+import time as t
 cap = cv2.VideoCapture(0)
 time = 0
 integral = 0
@@ -130,6 +131,7 @@ def main():
         # control.setValue(95)
         # sleep(1)
         control.setValue(PID(5,5,5,50,filter.getAvg()))
+        time = t.time()
         sleep(0.3)
         # print(f"val {filter.getAvg() }")
         # Display the resulting frame
