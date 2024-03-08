@@ -4,7 +4,10 @@ import threading
 from gpiozero import PWMOutputDevice
 from time import sleep
 cap = cv2.VideoCapture(0)
-
+time = 0
+integral = 0
+time_prev = -1e-6
+e_prev = 0
 
 class MovingAvgFilter:
     def __init__(self,sampleSize) -> None:
@@ -32,6 +35,7 @@ class fanControler:
             val = 0
         self.fan.value = val/100# 1 is max so devide input by a hundred
     #   sleep(0.05)
+    
     
     
 class BallFinder:
@@ -70,7 +74,19 @@ class BallFinder:
         return
 
                 
-            
+def PID(Kp, Ki, Kd, setpoint, measurement):
+    global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
+    offset = 0
+    # PID calculations
+    e = setpoint - measurement
+    P = Kp*e
+    integral = integral + Ki*e*(time - time_prev)
+    D = Kd*(e - e_prev)/(time - time_prev)# calculate manipulated variable - MV
+    MV = offset + P + integral + D
+    # update stored data for next iteration
+    e_prev = e
+    time_prev = time
+    return MV 
             
 def sendPwm(fan,val):
   if val >95:
@@ -113,7 +129,7 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        control.setValue(95)
+        control.setValue(PID(5,5,5,50,filter.getAvg()))
         sleep(0.3)
         # print(f"val {filter.getAvg() }")
         # Display the resulting frame
