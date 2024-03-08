@@ -29,11 +29,12 @@ class fanControler:
         self.fan = fan
         self.fan.frequency = 10000
     def setValue(self,val):
-        if val >100:
-            val = 100
-        elif val <0:
-            val = 0
-        self.fan.value = val/100# 1 is max so devide input by a hundred
+        if val >95:
+            val = 95
+        elif val <50:
+            val = 50
+        print(val)
+        self.fan.value = val/100.0# 1 is max so devide input by a hundred
     #   sleep(0.05)
     
     
@@ -129,6 +130,7 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
+        # print(PID(5,5,5,50,filter.getAvg()))
         control.setValue(PID(5,5,5,50,filter.getAvg()))
         sleep(0.3)
         # print(f"val {filter.getAvg() }")
