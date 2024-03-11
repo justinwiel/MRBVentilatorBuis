@@ -30,11 +30,11 @@ class fanControler:
         self.fan = fan
         self.fan.frequency = 10000
     def setValue(self,val):
-        if val >95:
+        if val >100:
             val = 95
-        elif val <50:
-            val = 50
-        print(val)
+        elif val <70:
+            val = 70
+        # print(val)
         self.fan.value = val/100.0# 1 is max so devide input by a hundred
     #   sleep(0.05)
     
@@ -61,7 +61,7 @@ class BallFinder:
         # Draw bounding box around the orange ball
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area > 20:
+            if area > 10:
                 rect = cv2.minAreaRect(contour)
                 box = cv2.boxPoints(rect)
                 box = np.intp(box)
@@ -105,6 +105,7 @@ def sendPwm(fan,val):
 
 
 def main():
+    global time
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
@@ -123,6 +124,9 @@ def main():
 
         
         ret, frame = cap.read()
+        measurement = 480 - filter.getAvg()
+        if measurement==480:
+            measurement = 0
         
         t1 = threading.Thread(target=find.findOrange,args=[frame,result])
         t1.start()
@@ -131,13 +135,14 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        # print(PID(5,5,5,50,filter.getAvg()))
-        control.setValue(PID(5,5,5,50,filter.getAvg()))
+        PID_res = PID(0.665,0,6,100,measurement)
+        # print(PID_res)
+        control.setValue(70)
         time = t.time()
-        sleep(0.3)
+        # sleep(0.01)
         # print(f"val {filter.getAvg() }")
         # Display the resulting frame
-        cv2.putText(frame,f'pos {filter.getAvg()}', 
+        cv2.putText(frame,f'pos {measurement}', 
         bottomLeftCornerOfText, 
         font, 
         fontScale,
