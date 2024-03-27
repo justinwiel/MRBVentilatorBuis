@@ -100,7 +100,7 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
 
 def main():
     global time
-    Device.pin_factory = MockFactory(pin_class=MockPWMPin)
+    # Device.pin_factory = MockFactory(pin_class=MockPWMPin)
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
