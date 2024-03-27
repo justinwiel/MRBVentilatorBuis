@@ -131,7 +131,7 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        PID_res = PID(0.665,0,6,200,measurement)
+        PID_res = PID(0.5,-0,.002,200,measurement)
         # print(PID_res)
         control.setValue(PID_res)
         time = t.time()
@@ -150,7 +150,7 @@ def main():
         # Exit if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        print(fan.value)
+        # print(fan.value)
 
     # Release the capture and destroy all windows
     cap.release()
