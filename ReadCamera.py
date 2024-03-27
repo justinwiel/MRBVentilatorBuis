@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 import threading
-from gpiozero import PWMOutputDevice
+from gpiozero import PWMOutputDevice, Device
+from gpiozero.pins.mock import MockFactory, MockPWMPin
 from time import sleep
 import time as t
 cap = cv2.VideoCapture(0)
@@ -90,13 +91,6 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
     time_prev = time
     return MV 
             
-def sendPwm(fan,val):
-  if val >95:
-      val = 95
-  elif val <0:
-      val = 0
-  fan.value = val/100# 1 is max so devide input by a hundred
-#   sleep(0.05)
 
 
 
@@ -106,6 +100,7 @@ def sendPwm(fan,val):
 
 def main():
     global time
+    Device.pin_factory = MockFactory(pin_class=MockPWMPin)
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
@@ -124,9 +119,10 @@ def main():
 
         
         ret, frame = cap.read()
-        measurement = 480 - filter.getAvg()
-        if measurement==480:
-            measurement = 0
+        measurement = filter.getAvg()
+        frame = cv2.flip(frame,0)
+        # if measurement==480:
+        #     measurement = 0
         
         t1 = threading.Thread(target=find.findOrange,args=[frame,result])
         t1.start()
@@ -135,9 +131,9 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        PID_res = PID(0.665,0,6,100,measurement)
+        PID_res = PID(0.665,0,6,200,measurement)
         # print(PID_res)
-        control.setValue(70)
+        control.setValue(PID_res)
         time = t.time()
         # sleep(0.01)
         # print(f"val {filter.getAvg() }")
@@ -154,6 +150,7 @@ def main():
         # Exit if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        print(fan.value)
 
     # Release the capture and destroy all windows
     cap.release()
