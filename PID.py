@@ -157,7 +157,7 @@ def main():
         fontColor,
         thickness,
         lineType)
-        cv2.imshow('Orange Ball Tracking', frame)
+        cv2.imshow('PID window', frame)
         
         # Exit if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
