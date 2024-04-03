@@ -11,6 +11,7 @@ integral = 0
 time_prev = -1e-6
 e_prev = 0
 
+
 class MovingAvgFilter:
     def __init__(self,sampleSize) -> None:
         self.values = []
