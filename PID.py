@@ -150,6 +150,13 @@ def main():
         fontColor,
         thickness,
         lineType)
+        cv2.putText(frame,f'PID {PID_res}', 
+        bottomLeftCornerOfText, 
+        font, 
+        fontScale,
+        fontColor,
+        thickness,
+        lineType)
         cv2.imshow('Orange Ball Tracking', frame)
         
         # Exit if 'q' is pressed
