@@ -79,7 +79,7 @@ class BallFinder:
                 
 def PID(Kp, Ki, Kd, setpoint, measurement):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
-    offset = 0
+    offset = 40
     # PID calculations
     e = setpoint - measurement
     P = Kp*e
