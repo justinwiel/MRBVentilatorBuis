@@ -100,12 +100,13 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
 
 def main():
     global time
+    # line below is for on desktop testing
     # Device.pin_factory = MockFactory(pin_class=MockPWMPin)
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
     filter = MovingAvgFilter(3)
-    result = [0]
+    result = [None]
     control.setValue(100)
     sleep(0.2)
     font                   = cv2.FONT_HERSHEY_SIMPLEX
@@ -119,7 +120,6 @@ def main():
 
         
         ret, frame = cap.read()
-        measurement = filter.getAvg()
         frame = cv2.flip(frame,0)
         # if measurement==480:
         #     measurement = 0
@@ -128,10 +128,15 @@ def main():
         t1.start()
         t1.join()
         filter.addSample(result[0])
+        measurement = filter.getAvg()
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        PID_res = PID(0.5,-0,.002,200,measurement)
+        P = 0.5
+        I = 0
+        D = 0.002
+        setpoint = 200
+        PID_res = PID(P,I,D,setpoint,measurement)
         # print(PID_res)
         control.setValue(PID_res)
         time = t.time()
