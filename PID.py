@@ -151,7 +151,7 @@ def main():
         thickness,
         lineType)
         cv2.putText(frame,f'PID {PID_res}', 
-        bottomLeftCornerOfText, 
+        bottomLeftCornerOfText + (0,20), 
         font, 
         fontScale,
         fontColor,
