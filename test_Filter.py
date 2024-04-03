@@ -1,5 +1,5 @@
 import numpy as np
-from ReadCamera import MovingAvgFilter
+from PID import MovingAvgFilter
 
 # Test case 1: Empty filter
 filter1 = MovingAvgFilter(5)
