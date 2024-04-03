@@ -11,6 +11,7 @@ integral = 0
 time_prev = -1e-6
 e_prev = 0
 
+
 class MovingAvgFilter:
     def __init__(self,sampleSize) -> None:
         self.values = []
@@ -79,7 +80,7 @@ class BallFinder:
                 
 def PID(Kp, Ki, Kd, setpoint, measurement):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
-    offset = 0
+    offset = 40
     # PID calculations
     e = setpoint - measurement
     P = Kp*e
@@ -151,13 +152,13 @@ def main():
         thickness,
         lineType)
         cv2.putText(frame,f'PID {PID_res}', 
-        (bottomLeftCornerOfText[0],bottomLeftCornerOfText[1]+5), 
+        (bottomLeftCornerOfText[0],bottomLeftCornerOfText[1]+25), 
         font, 
         fontScale,
         fontColor,
         thickness,
         lineType)
-        cv2.imshow('Orange Ball Tracking', frame)
+        cv2.imshow('PID window', frame)
         
         # Exit if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
