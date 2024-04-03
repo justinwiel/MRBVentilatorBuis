@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import cv2
 import threading
 from gpiozero import PWMOutputDevice, Device
@@ -102,7 +103,8 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
 def main():
     global time
     # line below is for on desktop testing
-    # Device.pin_factory = MockFactory(pin_class=MockPWMPin)
+    if os.name == 'nt':
+        Device.pin_factory = MockFactory(pin_class=MockPWMPin)
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
