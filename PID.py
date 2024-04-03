@@ -103,6 +103,7 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
 def main():
     global time
     # line below is for on desktop testing
+    print(os.name)
     if os.name == 'nt':
         Device.pin_factory = MockFactory(pin_class=MockPWMPin)
     fan = PWMOutputDevice(14,active_high=True)
