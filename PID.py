@@ -33,10 +33,10 @@ class fanControler:
         self.fan = fan
         self.fan.frequency = 10000
     def setValue(self,val):
-        if val >100:
+        if val >95:
             val = 95
-        elif val <70:
-            val = 70
+        elif val <0:
+            val = 0
         # print(val)
         self.fan.value = val/100.0# 1 is max so devide input by a hundred
     #   sleep(0.05)
@@ -79,9 +79,8 @@ class BallFinder:
         return
 
                 
-def PID(Kp, Ki, Kd, setpoint, measurement):
+def PID(Kp, Ki, Kd, setpoint, measurement,offset):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
-    offset = 40
     # PID calculations
     e = setpoint - measurement
     P = Kp*e
@@ -98,8 +97,6 @@ def PID(Kp, Ki, Kd, setpoint, measurement):
 
 
 
-
-
 def main():
     global time
     # line below is for on desktop testing
@@ -109,7 +106,7 @@ def main():
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
-    filter = MovingAvgFilter(3)
+    filter = MovingAvgFilter(10)
     result = [None]
     control.setValue(100)
     sleep(0.2)
@@ -120,7 +117,6 @@ def main():
     thickness              = 1
     lineType               = 2
     while True:
-
 
         
         ret, frame = cap.read()
@@ -136,11 +132,10 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        P = 0.5
-        I = 0
-        D = 0.002
-        setpoint = 200
-        PID_res = PID(P,I,D,setpoint,measurement)
+        P,I,D = 0.1,0,0
+        setpoint = 400
+        offset = 75
+        PID_res = PID(P,I,D,setpoint,measurement,offset)
         # print(PID_res)
         control.setValue(PID_res)
         time = t.time()
