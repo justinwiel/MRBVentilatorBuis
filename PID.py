@@ -33,8 +33,8 @@ class fanControler:
         self.fan = fan
         self.fan.frequency = 10000
     def setValue(self,val):
-        if val >95:
-            val = 95
+        if val >99:
+            val = 99
         elif val <0:
             val = 0
         # print(val)
@@ -45,8 +45,8 @@ class fanControler:
     
 class BallFinder:
     def findOrange(self, frame,result):
-        lower_orange = np.array([0, 204, 204])
-        upper_orange = np.array([30, 255, 255])
+        lower_orange = np.array([0, 200, 200])
+        upper_orange = np.array([35, 255, 255])
         self.findColor(frame, lower_orange, upper_orange,result)
 
     def findColor(self, frame, lower, upper,result):
@@ -60,26 +60,28 @@ class BallFinder:
 
         # Find contours of the orange ball
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+        biggestArea = 10
         # Draw bounding box around the orange ball
+        result[0] = 100# if no ball is found return 100 as the height 
+        selectedContour = None
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area > 10:
-                rect = cv2.minAreaRect(contour)
-                box = cv2.boxPoints(rect)
-                box = np.intp(box)
+            if area > biggestArea:
+                biggestArea = area
+                selectedContour=contour
+        rect = cv2.minAreaRect(selectedContour)
+        box = cv2.boxPoints(rect)
+        box = np.intp(box)
 
-                # Apply smoothing filter to contour points
-                box_smoothed = cv2.convexHull(box)
+        # Apply smoothing filter to contour points
+        box_smoothed = cv2.convexHull(box)
 
-                cv2.drawContours(frame, [box_smoothed], 0, (0, 255, 0), 2)
-                result[0]= rect[0][1]
-                return#return like this, to provide the option to use a seperate thread
-        result[0] = 0# if no ball is found return 0 
-        return
+        cv2.drawContours(frame, [box_smoothed], 0, (0, 255, 0), 2)
+        result[0]= rect[0][1]
+        return#return like this, to provide the option to use a seperate thread 
 
                 
-def PID(Kp, Ki, Kd, setpoint, measurement,offset):
+def PID(Kp, Ki, Kd, setpoint, measurement,offset = 0):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
     # PID calculations
     e = setpoint - measurement
@@ -106,10 +108,10 @@ def main():
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
-    filter = MovingAvgFilter(10)
+    filter = MovingAvgFilter(3)
     result = [None]
     control.setValue(100)
-    sleep(0.2)
+    sleep(0.1)
     font                   = cv2.FONT_HERSHEY_SIMPLEX
     bottomLeftCornerOfText = (10,30)
     fontScale              = 1
@@ -118,7 +120,6 @@ def main():
     lineType               = 2
     while True:
 
-        
         ret, frame = cap.read()
         frame = cv2.flip(frame,0)
         # if measurement==480:
@@ -132,14 +133,17 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        P,I,D = 0.1,0,0
-        setpoint = 400
-        offset = 75
+        P,I,D = .015,.0000000000_035,.05
+        setpoint = 300
+        offset = 72
         PID_res = PID(P,I,D,setpoint,measurement,offset)
+        if(setpoint <= 90):
+            PID_res = 0
+
         # print(PID_res)
         control.setValue(PID_res)
         time = t.time()
-        # sleep(0.01)
+        # sleep(.1)
         # print(f"val {filter.getAvg() }")
         # Display the resulting frame
         cv2.putText(frame,f'pos {measurement}', 
