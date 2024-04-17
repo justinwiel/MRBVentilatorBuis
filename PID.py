@@ -133,7 +133,7 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        P,I,D = .015,.0000000000_035,.05
+        P,I,D = .015,.0000000000_023,.060
         setpoint = 300
         offset = 72
         PID_res = PID(P,I,D,setpoint,measurement,offset)
@@ -155,6 +155,13 @@ def main():
         lineType)
         cv2.putText(frame,f'PID {PID_res}', 
         (bottomLeftCornerOfText[0],bottomLeftCornerOfText[1]+25), 
+        font, 
+        fontScale,
+        fontColor,
+        thickness,
+        lineType)
+        cv2.putText(frame,f'setpoint {setpoint}', 
+        (bottomLeftCornerOfText[0],bottomLeftCornerOfText[1]+50), 
         font, 
         fontScale,
         fontColor,
