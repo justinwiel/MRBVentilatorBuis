@@ -11,6 +11,7 @@ time = 0
 integral = 0
 time_prev = -1e-6
 e_prev = 0
+allowedDiff = 20
 
 
 class MovingAvgFilter:
@@ -85,6 +86,8 @@ def PID(Kp, Ki, Kd, setpoint, measurement,offset = 0):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
     # PID calculations
     e = setpoint - measurement
+    if (e > 0 and e < allowedDiff ) or (e < 0 and e > -1*allowedDiff ): #wannneer de bal binnen de acceptabele waarden is, breng de waarde handmatig naar nul.
+        e = 0
     P = Kp*e
     integral = integral + Ki*e*(time - time_prev)
     D = Kd*(e - e_prev)/(time - time_prev)# calculate manipulated variable - MV
@@ -104,11 +107,11 @@ def main():
     # line below is for on desktop testing
     print(os.name)
     if os.name == 'nt':
-        Device.pin_factory = MockFactory(pin_class=MockPWMPin)
+        Device.pin_factory = MockFactory(pin_class=MockPWMPin)#aanwezig voor testen op PC irrelevant voor eindproduct
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
-    filter = MovingAvgFilter(3)
+    filter = MovingAvgFilter(1)
     result = [None]
     control.setValue(100)
     sleep(0.1)
@@ -133,9 +136,9 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        P,I,D = .015,.0000000000_023,.060
-        setpoint = 300
-        offset = 72
+        P,I,D = .015,.0000000000_025,.060
+        setpoint = 400
+        offset = 73
         PID_res = PID(P,I,D,setpoint,measurement,offset)
         if(setpoint <= 90):
             PID_res = 0
