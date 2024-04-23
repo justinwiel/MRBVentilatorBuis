@@ -11,7 +11,7 @@ time = 0
 integral = 0
 time_prev = -1e-6
 e_prev = 0
-allowedDiff = 20
+allowedDiff = 0
 
 
 class MovingAvgFilter:
@@ -86,7 +86,7 @@ def PID(Kp, Ki, Kd, setpoint, measurement,offset = 0):
     global time, integral, time_prev, e_prev# Value of offset - when the error is equal zero
     # PID calculations
     e = setpoint - measurement
-    if (e > 0 and e < allowedDiff ) or (e < 0 and e > -1*allowedDiff ): #wannneer de bal binnen de acceptabele waarden is, breng de waarde handmatig naar nul.
+    if (e > 0 and e < allowedDiff ) or (e < 0 and e > -1*allowedDiff ): #wannneer de bal binnen de acceptabele waarden is, breng de waarde handmatig naar nul.q
         e = 0
     P = Kp*e
     integral = integral + Ki*e*(time - time_prev)
@@ -98,7 +98,14 @@ def PID(Kp, Ki, Kd, setpoint, measurement,offset = 0):
     return MV 
             
 
-
+def on_click(event,x,y,flags,param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        if y > 350:
+            param[0] = 350
+        elif y < 130:
+            param[0] = 130
+        else:
+            param[0] = y
 
 
 
@@ -118,9 +125,10 @@ def main():
     font                   = cv2.FONT_HERSHEY_SIMPLEX
     bottomLeftCornerOfText = (10,30)
     fontScale              = 1
-    fontColor              = (255,0,0)
+    fontColor              = (127,255,0)
     thickness              = 1
     lineType               = 2
+    setpointList = [300]
     while True:
 
         ret, frame = cap.read()
@@ -136,9 +144,9 @@ def main():
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
-        P,I,D = .015,.0000000000_025,.060
-        setpoint = 400
-        offset = 73
+        P,I,D = .035,.0000000000_030,.065
+        setpoint = setpointList[0]
+        offset = 72.85
         PID_res = PID(P,I,D,setpoint,measurement,offset)
         if(setpoint <= 90):
             PID_res = 0
@@ -170,6 +178,9 @@ def main():
         fontColor,
         thickness,
         lineType)
+        cv2.namedWindow('PID window')
+        cv2.setMouseCallback('PID window',on_click,param=setpointList)
+        frame = cv2.line(frame, (0,setpointList[0]), (800,setpointList[0]), fontColor, 2)
         cv2.imshow('PID window', frame)
         
         # Exit if 'q' is pressed
