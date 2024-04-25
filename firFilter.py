@@ -18,8 +18,7 @@ def fir_filter(signal, num_taps, cutoff_freq, sampling_freq):
     
     return filtered_signal
 
-if __name__ == "__main__":
-
+def main():
     # Define the filter parameters
     num_taps = 300  # Number of filter taps
     cutoff_freq = 0.5  # Cutoff frequency of the filter (normalized frequency, 0.0 to 0.5)
@@ -79,3 +78,6 @@ if __name__ == "__main__":
     plt.legend()
     plt.grid(True)
     plt.show()
+    
+if __name__ == "__main__":
+    main()
