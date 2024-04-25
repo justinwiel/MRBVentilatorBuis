@@ -14,17 +14,7 @@ e_prev = 0
 allowedDiff = 0
 
 
-class MovingAvgFilter:
-    def __init__(self,sampleSize) -> None:
-        self.values = []
-        self.sampleSize = sampleSize
-    def addSample(self,sample):
-        self.values.append(sample)
-        if len(self.values) > self.sampleSize:
-            self.values.pop(0)  # remove first element if maximum sample size is reached. 
-            
-    def getAvg(self):
-        return  np.average(self.values) if len(self.values) >0 else 0
+
 
 
 
@@ -118,7 +108,6 @@ def main():
     fan = PWMOutputDevice(14,active_high=True)
     control = fanControler(fan)
     find = BallFinder()
-    filter = MovingAvgFilter(1)
     result = [None]
     control.setValue(100)
     sleep(0.1)
@@ -139,8 +128,7 @@ def main():
         t1 = threading.Thread(target=find.findOrange,args=[frame,result])
         t1.start()
         t1.join()
-        filter.addSample(result[0])
-        measurement = filter.getAvg()
+        measurement = result[0]
         # control.setValue(100)
         # control.setValue(95)
         # sleep(1)
